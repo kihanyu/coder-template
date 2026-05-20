@@ -31,9 +31,8 @@ resource "docker_volume" "pg_data" {
 
 # 4. Coder 에이전트 설정 (Spring Boot 환경 구축 및 구동 스크립트)
 resource "coder_agent" "main" {
-  os             = "linux"
   arch           = "amd64"
-  api_key_scope = "all"
+  os             = "linux"
   startup_script = <<EOT
     #!/bin/bash
     echo "☕ JDK 25 및 개발 도구 환경 설치 중..."
@@ -89,7 +88,7 @@ resource "docker_container" "workspace" {
 # 6. 사이드카(Sidecar) PostgreSQL 컨테이너
 resource "docker_container" "postgres" {
   count = data.coder_workspace.me.start ? 1 : 0
-  image = "postgres:16-alpine"
+  image = "postgres:18-alpine"
   name  = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}-postgres"
   
   networks_advanced {
@@ -100,7 +99,7 @@ resource "docker_container" "postgres" {
   env = [
     "POSTGRES_USER=shiloh",
     "POSTGRES_PASSWORD=devpass",
-    "POSTGRES_DB=appdb"
+    "POSTGRES_DB=tms"
   ]
 
   volumes {
